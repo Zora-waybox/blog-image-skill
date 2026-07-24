@@ -14,6 +14,10 @@
 `webp/jpg/OG` 文件，并**在完全不改动正文一个字**的前提下插入头图和章节配图（仅插入式写入、`.bak`
 备份、先空跑、失败即停）。每次运行都会生成一份 `.image-report.md`，含各维度评分与授权信息。
 
+<p align="center">
+  <img src="assets/pipeline.svg" alt="blog-smart-images 工作流程：Plan → Source → Score → Export → Insert → Report" width="860">
+</p>
+
 ## 快速开始
 
 ```
@@ -36,7 +40,7 @@
 - `skills/blog-smart-images/references/aesthetic-rubric.md` —— 源自 ArtiMuse 的评分协议
 - `skills/blog-smart-images/references/style-profile.md` —— 摄影语法 + 品牌 token（可按仓库覆盖）
 - `skills/blog-smart-images/templates/card-base.html` —— 经生产验证的品牌卡片布局（头图、数据卡、倒计时、图表、终端、OG）
-- `auto-illustrate.yml.example` + `INTEGRATION.md` —— 可直接放进你博客仓库的 CI；与 [cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills) 组合使用（先跑文本、再跑配图）
+- `auto-illustrate.yml.example` + `INTEGRATION.zh-CN.md` —— 可直接放进你博客仓库的 CI；与 [cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills) 组合使用（先跑文本、再跑配图）
 
 ## 许可证
 

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" role="img" aria-label="blog-smart-images pipeline: Plan then Source then Score then Export then Insert then Report">
+  <defs>
+    <radialGradient id="glow" cx="78%" cy="12%" r="72%">
+      <stop offset="0%" stop-color="#e8b26a" stop-opacity="0.15"/>
+      <stop offset="60%" stop-color="#e8b26a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b1209"/>
+      <stop offset="100%" stop-color="#130c06"/>
+    </linearGradient>
+    <style>
+      .t{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+      .m{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    </style>
+  </defs>
+
+  <rect x="4" y="4" width="1192" height="372" rx="20" fill="url(#panel)" stroke="#4a3016" stroke-width="1.5"/>
+  <rect x="4" y="4" width="1192" height="372" rx="20" fill="url(#glow)"/>
+
+  <text class="t" x="40" y="55" font-size="28" font-weight="700" fill="#e8b26a">blog-smart-images</text>
+  <text class="t" x="40" y="85" font-size="15" fill="#c9ab86">Pipeline — a text-only post goes in, an illustrated post comes out, prose untouched.</text>
+
+  <!-- boxes -->
+  <g class="t">
+    <!-- 01 Plan -->
+    <rect x="40" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="58" y="150" font-size="13" fill="#8a6f52">01</text>
+    <text x="58" y="182" font-size="22" font-weight="700" fill="#e8b26a">Plan</text>
+    <text x="58" y="208" font-size="13.5" fill="#c9ab86">Read post structure;</text>
+    <text x="58" y="228" font-size="13.5" fill="#c9ab86">derive hero / OG /</text>
+    <text x="58" y="248" font-size="13.5" fill="#c9ab86">section image slots</text>
+
+    <!-- 02 Source -->
+    <rect x="230" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="248" y="150" font-size="13" fill="#8a6f52">02</text>
+    <text x="248" y="182" font-size="22" font-weight="700" fill="#e8b26a">Source</text>
+    <text x="248" y="208" font-size="13.5" fill="#c9ab86">Licensed inputs only:</text>
+    <text x="248" y="228" font-size="13.5" fill="#c9ab86">asset library, brand-</text>
+    <text x="248" y="248" font-size="13.5" fill="#c9ab86">card renderer, opt.</text>
+    <text x="248" y="268" font-size="13.5" fill="#c9ab86">stock / gen APIs</text>
+
+    <!-- 03 Score -->
+    <rect x="420" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="438" y="150" font-size="13" fill="#8a6f52">03</text>
+    <text x="438" y="182" font-size="22" font-weight="700" fill="#e8b26a">Score</text>
+    <text x="438" y="208" font-size="13.5" fill="#c9ab86">8-dim ArtiMuse</text>
+    <text x="438" y="228" font-size="13.5" fill="#c9ab86">aesthetic rubric +</text>
+    <text x="438" y="248" font-size="13.5" fill="#c9ab86">brand style-fit gate</text>
+
+    <!-- 04 Export -->
+    <rect x="610" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="628" y="150" font-size="13" fill="#8a6f52">04</text>
+    <text x="628" y="182" font-size="22" font-weight="700" fill="#e8b26a">Export</text>
+    <text x="628" y="208" font-size="13.5" fill="#c9ab86">Post-process to</text>
+    <text x="628" y="228" font-size="13.5" fill="#c9ab86">web webp / jpg /</text>
+    <text x="628" y="248" font-size="13.5" fill="#c9ab86">OG sizes</text>
+
+    <!-- 05 Insert -->
+    <rect x="800" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="818" y="150" font-size="13" fill="#8a6f52">05</text>
+    <text x="818" y="182" font-size="22" font-weight="700" fill="#e8b26a">Insert</text>
+    <text x="818" y="208" font-size="13.5" fill="#c9ab86">Insert-only writes;</text>
+    <text x="818" y="228" font-size="13.5" fill="#c9ab86">alt text; .bak;</text>
+    <text x="818" y="248" font-size="13.5" fill="#c9ab86">dry-run first;</text>
+    <text x="818" y="268" font-size="13.5" fill="#c9ab86">never edits prose</text>
+
+    <!-- 06 Report -->
+    <rect x="990" y="120" width="170" height="170" rx="14" fill="#20150d" stroke="#4a3016" stroke-width="1.5"/>
+    <text class="m" x="1008" y="150" font-size="13" fill="#8a6f52">06</text>
+    <text x="1008" y="182" font-size="22" font-weight="700" fill="#e8b26a">Report</text>
+    <text x="1008" y="208" font-size="13.5" fill="#c9ab86">Emit .image-</text>
+    <text x="1008" y="228" font-size="13.5" fill="#c9ab86">report.md: scores</text>
+    <text x="1008" y="248" font-size="13.5" fill="#c9ab86">+ license info</text>
+  </g>
+
+  <!-- chevrons -->
+  <g fill="none" stroke="#e8b26a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M214,197 L226,205 L214,213"/>
+    <path d="M404,197 L416,205 L404,213"/>
+    <path d="M594,197 L606,205 L594,213"/>
+    <path d="M784,197 L796,205 L784,213"/>
+    <path d="M974,197 L986,205 L974,213"/>
+  </g>
+
+  <!-- footer -->
+  <line x1="40" y1="310" x2="1160" y2="310" stroke="#3a2817" stroke-width="1.5"/>
+  <text class="t" x="40" y="336" font-size="13.5"><tspan font-weight="700" fill="#1f9e85">GATES</tspan><tspan fill="#c9ab86">   composite &#8805; 70   &#183;   style-fit &#8805; 7</tspan></text>
+  <text class="t" x="40" y="360" font-size="13.5"><tspan font-weight="700" fill="#e8b26a">SAFETY</tspan><tspan fill="#c9ab86">   insert-only writes &#183; .bak backup &#183; dry-run first &#183; fail closed &#183; never edits prose</tspan></text>
+</svg>

@@ -1,39 +1,43 @@
-# 集成指南 — 把 blog-smart-images 插进你的博客自动化
+# Integration guide — wiring blog-smart-images into your blog automation
 
-三种接入方式，按改动量从小到大。仓库结构与安全约定刻意对齐
-[cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills)（blog-seo-geo），
-两个 skill 可以在同一条流水线里串联：**先文字（SEO/GEO），后配图（本 skill）**。
-blog-seo-geo 承诺逐字保留 `<img>` 与链接，本 skill 承诺只做插入、绝不改动正文 —— 两边互不破坏。
+**English** · [简体中文](INTEGRATION.zh-CN.md)
 
-## A. 独立 workflow（最快落地）
+Three ways to adopt it, from least to most invasive. The repo layout and safety
+conventions deliberately mirror [cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills)
+(blog-seo-geo), so the two skills chain in one pipeline: **text first (SEO/GEO), images
+second (this skill)**. blog-seo-geo promises to preserve every `<img>` and link verbatim;
+this skill promises insert-only writes that never touch prose — neither breaks the other.
 
-把 `.github/workflows/auto-illustrate.yml` 拷进**博客站仓库**，改两个变量：
+## A. Standalone workflow (fastest to ship)
 
-| 变量 | 含义 | 例 |
+Copy `.github/workflows/auto-illustrate.yml` into your **blog site repo** and change two variables:
+
+| Variable | Meaning | Example |
 |---|---|---|
-| `POSTS_DIR` | md 博文目录 | `content/blog` |
-| `IMAGES_DIR` | 站点静态图片目录 | `public/images` 或 `static/images` |
+| `POSTS_DIR` | Markdown posts directory | `content/blog` |
+| `IMAGES_DIR` | Site's static images directory | `public/images` or `static/images` |
 
-Secrets（Settings → Secrets and variables → Actions）：
+Secrets (Settings → Secrets and variables → Actions):
 
-| Key | 必需 | 用途 |
+| Key | Required | Purpose |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | ✅ | 驱动 claude-code-action 执行 skill（消耗你们已有的 Claude token） |
-| `PEXELS_API_KEY` | 推荐 | 图库主力：免费，~200 次/小时（脚本默认限 190 留余量） |
-| `UNSPLASH_ACCESS_KEY` | 可选 | 图库备胎：免费 demo ~50 次/小时（脚本默认限 45） |
-| `IMAGEGEN_API_KEY` + variable `IMAGEGEN_PROVIDER` | 可选 | AI 生成通路（按张计费，补图库搜不到的冷门场景） |
+| `ANTHROPIC_API_KEY` | ✅ | Drives claude-code-action to run the skill (spends your existing Claude tokens) |
+| `PEXELS_API_KEY` | Recommended | Primary stock source: free, ~200/hour (script caps at 190 for headroom) |
+| `UNSPLASH_ACCESS_KEY` | Optional | Backup stock source: free demo ~50/hour (script caps at 45) |
+| `IMAGEGEN_API_KEY` + variable `IMAGEGEN_PROVIDER` | Optional | AI-generation path (per-image billing; fills niche scenes stock can't find) |
 
-**双图库自动切换**：两个 key 都配上时，`scripts/fetch_stock.py` 按
-`STOCK_PROVIDER_ORDER`（默认 `pexels,unsplash`）依次取图；某一家小时额度到阀值
-（`PEXELS_HOURLY_CAP`/`UNSPLASH_HOURLY_CAP` 可调，比如都设 50）或返回 429/403 时
-**自动换下一家**，用量记录在 `.stock-usage.json` 滚动窗口里。Unsplash 的图会按其
-API 条款在 caption 自动附 "Photo by X on Unsplash" 署名；Pexels 无署名要求，
-摄影师信息记入报告。不配任何可选 key 时，skill 只用「仓库自有素材/照片库 +
-品牌卡兜底」，离线可跑、零外部依赖。
+**Dual-stock auto-failover**: with both keys set, `scripts/fetch_stock.py` pulls from
+providers in `STOCK_PROVIDER_ORDER` (default `pexels,unsplash`) in turn; when one hits its
+hourly cap (`PEXELS_HOURLY_CAP` / `UNSPLASH_HOURLY_CAP`, tunable — e.g. both 50) or returns
+429/403, it **fails over to the next**, tracking usage in a rolling `.stock-usage.json`
+window. Unsplash images automatically get a "Photo by X on Unsplash" credit in the caption
+per its API terms; Pexels has no attribution requirement, so the photographer info goes into
+the report. With no optional keys set, the skill uses only "repo-owned assets / photo library
++ brand-card fallback" — runs offline, zero external dependencies.
 
-## B. 插进你现有的博客生成 Action（推荐的最终形态）
+## B. Bolt onto your existing blog-generation Action (recommended end state)
 
-在你现有 workflow「生成/更新博文」的 step 之后、「构建/部署站点」的 step 之前，加一个 step：
+In your existing workflow, add a step after "generate/update posts" and before "build/deploy site":
 
 ```yaml
       - name: Install illustration skill
@@ -47,32 +51,36 @@ API 条款在 caption 自动附 "Photo by X on Unsplash" 署名；Pexels 无署�
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
-            Run the blog-smart-images skill on <本次生成的 md 路径>,
-            --images-dir <站点图片目录>/<post-slug>. Follow SKILL.md exactly.
+            Run the blog-smart-images skill on <path to the md generated this run>,
+            --images-dir <site images dir>/<post-slug>. Follow SKILL.md exactly.
 ```
 
-如果你的生成 step 本来就是 claude-code-action / Claude Code：把 skill 装进
-`.claude/skills/` 后，直接在同一个 prompt 里追加一句
-「生成完成后，对新文章执行 blog-smart-images skill」即可，无需第二个 step。
+If your generation step is already claude-code-action / Claude Code: after dropping the skill
+into `.claude/skills/`, just append one line to the same prompt — "after generating, run the
+blog-smart-images skill on the new post" — no second step needed.
 
-## C. 本地 / Cowork / Claude Code 手动跑
+## C. Local / Cowork / Claude Code manual run
 
 ```
-/plugin marketplace add Zora-waybox/blog-image-skill      # 或把 skills/blog-smart-images 拷进 .claude/skills/
+/plugin marketplace add Zora-waybox/blog-image-skill      # or copy skills/blog-smart-images into .claude/skills/
 /blog-image-skill:blog-smart-images content/blog/my-post.md --images-dir public/images/my-post
 ```
 
-## 站点模板注意事项（roadtripskill.dev）
+## Site-template notes (roadtripskill.dev)
 
-- skill 默认写三个 front-matter 键：`hero_image` / `hero_alt` / `og_image`。
-  模板若尚未消费它们：hero 已同时内联在正文首段后（模板支持后删内联即可）；
-  `og_image` 需在 `<head>` 里输出 `og:image` / `twitter:image`。
-- 图片按 `images/<post-slug>/<name>.webp`（+ .jpg 兜底）引用，请确保该目录被
-  站点当静态资源发布，或改 `IMAGES_DIR` 到你的约定位置。
-- 版权红线已写死在 SKILL.md：社媒截图（高光照片库）只作风格参照，像素永不进站。
+- The skill writes three front-matter keys by default: `hero_image` / `hero_alt` / `og_image`.
+  If your template doesn't consume them yet: the hero is also inlined right after the first
+  paragraph (once the template supports the keys, drop the inline copy); `og_image` needs
+  `og:image` / `twitter:image` emitted in `<head>`.
+- Images are referenced as `images/<post-slug>/<name>.webp` (+ a `.jpg` fallback) — make sure
+  that directory is published as a static asset, or point `IMAGES_DIR` at your convention.
+- The copyright red line is hard-coded in SKILL.md: social screenshots (the high-light photo
+  library) are style reference only — those pixels never ship to the site.
 
-## 与 blog-seo-geo 串联的顺序
+## Ordering when chaining with blog-seo-geo
 
-1. 生成/修改博文 → 2. `blog-seo-geo`（文字、head markup、JSON-LD）→
-3. `blog-smart-images`（hero/OG/段落图 + `.image-report.md`）→ 4. 构建部署。
-两个 skill 都是 dry-run→write、留 `.bak`、fail-closed，任何一步失败都不会破坏文章。
+1. Generate/edit post → 2. `blog-seo-geo` (text, head markup, JSON-LD) →
+3. `blog-smart-images` (hero/OG/section images + `.image-report.md`) → 4. build & deploy.
+
+Both skills are dry-run→write, leave a `.bak`, and fail closed — a failure at any step never
+corrupts the article.

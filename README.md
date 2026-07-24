@@ -17,6 +17,10 @@ hero + section figures **without touching a single word of prose** (insert-only 
 `.bak` backup, dry-run first, fail closed). Every run emits an `.image-report.md` with
 per-dimension scores and license info.
 
+<p align="center">
+  <img src="assets/pipeline.svg" alt="blog-smart-images pipeline: Plan → Source → Score → Export → Insert → Report" width="860">
+</p>
+
 ## Quick start
 
 ```
