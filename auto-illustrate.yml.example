@@ -1,0 +1,89 @@
+# Auto-illustrate blog posts — drop-in workflow.
+# Copy into the BLOG SITE repo's .github/workflows/ (adjust the two PATH vars).
+# Composes with cazerme/blog-marketing-skills: SEO/GEO pass first, images second.
+name: Auto-illustrate blog
+
+on:
+  push:
+    branches: [main]
+    paths: ["content/blog/**.md"]   # ← adjust to your posts dir
+  workflow_dispatch:
+    inputs:
+      post:
+        description: "Path to a specific post to illustrate (optional)"
+        required: false
+
+env:
+  POSTS_DIR: content/blog          # ← adjust
+  IMAGES_DIR: public/images        # ← adjust (dir your site serves statically)
+
+concurrency:
+  group: illustrate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  illustrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+
+      # 1) Pull in the skills: our image skill + (optionally) the SEO/GEO plugin
+      - name: Install skills into .claude/skills
+        run: |
+          mkdir -p .claude/skills
+          git clone --depth 1 https://github.com/Waybox-AI/blog-image-skill /tmp/bis
+          cp -r /tmp/bis/skills/blog-smart-images .claude/skills/
+          git clone --depth 1 https://github.com/cazerme/blog-marketing-skills /tmp/bms || true
+          cp -r /tmp/bms/skills/blog-seo-geo .claude/skills/ 2>/dev/null || true
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Deps (Pillow + Playwright for the brand card renderer)
+        run: |
+          pip install pillow playwright
+          playwright install --with-deps chromium
+
+      # 2) Which posts changed?
+      - name: Detect changed posts
+        id: changed
+        run: |
+          if [ -n "${{ github.event.inputs.post }}" ]; then
+            echo "files=${{ github.event.inputs.post }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "files=$(git diff --name-only HEAD~1 -- '${{ env.POSTS_DIR }}/**.md' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+          fi
+
+      # 3) Let Claude run the skill end-to-end on each changed post
+      - name: Illustrate changed posts
+        if: steps.changed.outputs.files != ''
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            For each of these blog posts: ${{ steps.changed.outputs.files }}
+            1. If the blog-seo-geo skill is available and the post has no
+               .seo-report.md yet, run it first.
+            2. Then run the blog-smart-images skill on the post with
+               --images-dir ${{ env.IMAGES_DIR }}/<post-slug>.
+               Follow its SKILL.md exactly: licensed sources only, ArtiMuse-style
+               scoring with the accept gates, insert-only writes, image report.
+            Posts that already have a hero_image front-matter key and >=2 figures
+            should be skipped (report "already illustrated").
+        env:
+          # optional sources — leave unset to use asset library + brand cards only
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          IMAGEGEN_PROVIDER: ${{ vars.IMAGEGEN_PROVIDER }}
+          IMAGEGEN_API_KEY: ${{ secrets.IMAGEGEN_API_KEY }}
+
+      # 4) Commit images + updated posts + reports
+      - name: Commit results
+        run: |
+          git config user.name "blog-image-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A '${{ env.POSTS_DIR }}' '${{ env.IMAGES_DIR }}' '*.image-report.md' || true
+          git diff --cached --quiet || git commit -m "chore(blog): auto-illustrate posts [skip ci]"
+          git push

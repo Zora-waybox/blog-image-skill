@@ -1,0 +1,17 @@
+{
+  "frontmatter": {
+    "hero_image": "images/my-post/hero-my-post.webp",
+    "hero_alt": "Golden-hour desert highway with a dashed five-stop route overlay",
+    "og_image": "images/my-post/og-my-post-1200x630.jpg"
+  },
+  "inserts": [
+    {
+      "after_heading": "## The five things generic planners miss",
+      "block": "![Five illustrated cards: drive caps, book-by dates, EV range, closures, borders](images/my-post/five-cards.webp \"The five checks\")\n*The five checks that separate a plan from a wishlist.*"
+    },
+    {
+      "after_text": "a bare model will cheerfully tell you to \"check the park website.\"",
+      "block": "![Sample booking countdown with exact book-by dates per reservation system](images/my-post/countdown.webp \"A date is advice\")\n*Sample countdown — each item lands on the right reservation system.*"
+    }
+  ]
+}

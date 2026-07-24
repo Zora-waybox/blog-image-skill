@@ -1,0 +1,297 @@
+<!--
+card-base.html — Waybox brand card template (worked example, production-tested).
+HOW TO USE (per SKILL.md step 2):
+  1. Copy this file, keep the <style> block (brand tokens live in :root).
+  2. Keep/duplicate the .frame layouts you need and give each a unique id:
+       #hero  editorial hero (headline + dashed-route SVG scene)
+       #modes 5-up stat/icon cards      #count booking-countdown panel
+       #ev    single-series chart frame #term  terminal window
+       #og    1200x630 social card (frame class "og")
+  3. Replace ONLY copy/labels/numbers with facts from the post being illustrated
+     (no-fabrication rule). Palette: gold #e8b26a decor, data amber #bd843c,
+     teal #1f9e85 markers — amber/teal pair is CVD-validated on this surface.
+  4. Render: python3 ../scripts/render_cards.py --html this.html --frames hero,og --out raw/
+-->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  :root{
+    --ink:#f2e5d0; --muted:#c9ab86; --faint:#8a6f52;
+    --gold:#e8b26a; --amber:#bd843c; --teal:#1f9e85;
+    --bg0:#16100a; --bg1:#241609; --surface:#20150d;
+    --card:#2a1b0f; --line:#4a3016;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;font-family:'Liberation Serif','DejaVu Serif','Noto Serif CJK SC',serif;color:var(--ink)}
+  .mono{font-family:'DejaVu Sans Mono','Liberation Mono',monospace}
+  .frame{position:relative;width:2400px;height:1350px;overflow:hidden;
+    background:
+      radial-gradient(1600px 900px at 78% 18%, rgba(232,178,106,.16), transparent 60%),
+      radial-gradient(1800px 1200px at 15% 95%, rgba(120,70,25,.18), transparent 65%),
+      linear-gradient(160deg, var(--bg0) 0%, var(--bg1) 55%, #1a0f07 100%);}
+  .frame.og{height:1260px}
+  .vin{position:absolute;inset:0;background:radial-gradient(140% 110% at 50% 42%, transparent 55%, rgba(0,0,0,.42) 100%);pointer-events:none}
+  .grain{position:absolute;inset:0;opacity:.05;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");}
+  .foot{position:absolute;left:70px;right:70px;bottom:44px;display:flex;justify-content:space-between;align-items:center}
+  .foot .l{font-size:26px;letter-spacing:.22em;color:var(--faint)}
+  .chip{background:var(--teal);color:#062019;font-size:24px;letter-spacing:.14em;padding:10px 26px;border-radius:999px;font-weight:bold}
+  .kicker{font-size:28px;letter-spacing:.34em;color:var(--gold);opacity:.92}
+  h1{font-weight:normal}
+  .rule{height:2px;background:linear-gradient(90deg,var(--gold),transparent);width:220px;margin:30px 0}
+
+  /* ---------- HERO ---------- */
+  #hero .copy{position:absolute;left:110px;top:150px;max-width:1150px;z-index:3}
+  #hero h1{font-size:118px;line-height:1.08;letter-spacing:.01em}
+  #hero h1 .vs{font-style:italic;color:var(--gold);font-size:86px;padding:0 14px}
+  #hero .sub{margin-top:44px;font-style:italic;font-size:44px;color:var(--muted);line-height:1.4}
+  #hero .tags{margin-top:56px;display:flex;gap:22px}
+  #hero .tag{border:1px solid var(--line);border-radius:999px;padding:12px 28px;font-size:24px;letter-spacing:.18em;color:var(--muted)}
+  #hero svg{position:absolute;inset:0;z-index:1}
+  /* ---------- CARDS (five modes) ---------- */
+  #modes .head{position:absolute;left:110px;top:120px}
+  #modes h1{font-size:76px;margin-top:26px}
+  #modes h1 em{color:var(--gold)}
+  #modes .grid{position:absolute;left:110px;right:110px;top:420px;display:grid;grid-template-columns:repeat(5,1fr);gap:34px}
+  .mcard{background:linear-gradient(180deg,#2c1c0f,#241508);border:1px solid var(--line);border-radius:18px;padding:44px 36px;height:640px;position:relative}
+  .mcard .num{position:absolute;top:30px;right:34px;font-size:26px;color:var(--faint)}
+  .mcard svg{width:96px;height:96px;margin-bottom:40px}
+  .mcard h3{font-size:40px;line-height:1.2;margin-bottom:22px}
+  .mcard p{font-size:26px;line-height:1.5;color:var(--muted)}
+  .mcard .foot2{position:absolute;left:36px;bottom:32px;font-size:21px;letter-spacing:.12em;color:var(--faint)}
+  /* ---------- COUNTDOWN ---------- */
+  #count .copy{position:absolute;left:110px;top:210px;width:860px}
+  #count h1{font-size:96px;line-height:1.1;font-style:italic}
+  #count h1 b{font-style:normal;font-weight:normal;color:var(--gold)}
+  #count .sub{margin-top:40px;font-size:36px;color:var(--muted);line-height:1.5}
+  #count .panel{position:absolute;right:110px;top:150px;width:1180px;background:linear-gradient(180deg,#2c1c0f,#221407);
+    border:1px solid var(--line);border-radius:22px;padding:56px 60px}
+  #count .panel .ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:14px}
+  #count .panel .ph .t{font-size:30px;letter-spacing:.26em;color:var(--gold)}
+  #count .panel .ph .s{font-size:24px;color:var(--faint)}
+  .row{display:flex;align-items:center;gap:36px;padding:34px 0;border-bottom:1px dashed #3a2615}
+  .row:last-child{border-bottom:none}
+  .date{width:210px;text-align:center;border:1px solid var(--gold);color:var(--gold);border-radius:12px;padding:14px 0;font-size:28px;letter-spacing:.08em}
+  .what{flex:1}
+  .what .a{font-size:33px;margin-bottom:10px}
+  .what .b{font-size:24px;color:var(--faint);letter-spacing:.06em}
+  .left{width:190px;text-align:right;font-size:25px;color:var(--muted)}
+  .left b{display:block;font-size:44px;color:var(--ink);font-weight:normal}
+  /* ---------- EV ---------- */
+  #ev .head{position:absolute;left:110px;top:110px;right:110px;display:flex;justify-content:space-between;align-items:flex-end}
+  #ev h1{font-size:66px;margin-top:24px}
+  #ev h1 em{color:var(--gold)}
+  #ev .legend{display:flex;gap:44px;font-size:26px;color:var(--muted);font-family:'DejaVu Sans Mono',monospace}
+  #ev .legend .sw{display:inline-block;width:44px;height:6px;background:var(--amber);border-radius:3px;vertical-align:middle;margin-right:14px}
+  #ev .legend .dot{display:inline-block;width:22px;height:22px;background:var(--teal);border-radius:50%;vertical-align:middle;margin-right:14px}
+  #ev .plot{position:absolute;left:110px;right:110px;top:380px}
+  /* ---------- TERMINAL ---------- */
+  #term .copy{position:absolute;left:0;right:0;top:130px;text-align:center}
+  #term h1{font-size:78px}
+  #term h1 em{color:var(--gold)}
+  #term .win{position:absolute;left:50%;transform:translateX(-50%);top:330px;width:1560px;background:#140d07;border:1px solid var(--line);
+    border-radius:20px;box-shadow:0 60px 120px rgba(0,0,0,.5)}
+  #term .bar{display:flex;gap:16px;padding:26px 30px;border-bottom:1px solid #2c1c0f}
+  #term .bar i{width:22px;height:22px;border-radius:50%;background:#3a2817}
+  #term .bar i:first-child{background:#8a5a3a}
+  #term pre{padding:48px 62px;font-family:'DejaVu Sans Mono',monospace;font-size:33px;line-height:2.05;color:var(--muted)}
+  #term pre .c{color:var(--gold)}
+  #term pre .g{color:#3dd6b5}
+  #term pre .w{color:var(--ink)}
+  #term .below{position:absolute;left:0;right:0;top:1130px;text-align:center;font-style:italic;font-size:40px;color:var(--muted)}
+  #term .below b{color:var(--gold);font-weight:normal}
+  /* ---------- OG ---------- */
+  #og .copy{position:absolute;left:120px;top:170px;max-width:1500px;z-index:3}
+  #og h1{font-size:128px;line-height:1.1}
+  #og h1 .vs{font-style:italic;color:var(--gold);font-size:96px}
+  #og .sub{margin-top:46px;font-style:italic;font-size:48px;color:var(--muted)}
+  #og .dom{position:absolute;left:120px;bottom:70px;font-size:34px;letter-spacing:.3em;color:var(--gold)}
+</style></head><body>
+
+<!-- ================= HERO ================= -->
+<div class="frame" id="hero">
+  <svg viewBox="0 0 2400 1350" fill="none">
+    <path d="M0 1120 L420 980 L700 1060 L980 940 L1300 1050 L1650 900 L2000 1030 L2400 920 L2400 1350 L0 1350 Z" fill="#1c1108"/>
+    <path d="M0 1230 L500 1110 L900 1190 L1400 1080 L1900 1170 L2400 1090 L2400 1350 L0 1350 Z" fill="#150c05"/>
+    <circle cx="1880" cy="330" r="150" fill="rgba(232,178,106,.20)"/>
+    <circle cx="1880" cy="330" r="86" fill="rgba(232,178,106,.30)"/>
+    <!-- planned route fork (left, structured) -->
+    <path id="p1" d="M 340 1340 C 700 1180 1050 1150 1330 990 C 1580 850 1760 700 2080 560"
+      stroke="#e8b26a" stroke-width="7" stroke-dasharray="26 22" stroke-linecap="round"/>
+    <!-- generic fork: dissolves -->
+    <path d="M 1330 990 C 1500 960 1650 980 1800 1005" stroke="#8a6f52" stroke-width="6" stroke-dasharray="8 30" stroke-linecap="round" opacity=".8"/>
+    <g font-family="DejaVu Sans Mono" font-size="26" fill="#c9ab86">
+      <g><circle cx="620" cy="1213" r="26" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="612" y="1223" fill="#e8b26a">1</text><text x="664" y="1222" letter-spacing="3">D1 · LAS VEGAS</text></g>
+      <g><circle cx="1010" cy="1103" r="26" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="1002" y="1113" fill="#e8b26a">2</text><text x="1054" y="1112" letter-spacing="3">D2 · ZION NP</text></g>
+      <g><circle cx="1400" cy="922" r="26" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="1392" y="932" fill="#e8b26a">3</text><text x="1444" y="931" letter-spacing="3">D3 · BRYCE · GATE CLOSES 19:00</text></g>
+      <g><circle cx="1730" cy="737" r="26" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="1774" y="746" letter-spacing="3">D4 · PAGE · BOOK BY SEP 08</text><text x="1722" y="747" fill="#e8b26a">4</text></g>
+      <g><circle cx="2080" cy="560" r="26" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="2044" y="510" letter-spacing="3" text-anchor="end">D5 · GRAND CANYON</text><text x="2072" y="570" fill="#e8b26a">5</text></g>
+      <!-- wishlist pins on generic fork -->
+      <g fill="#8a6f52"><text x="1600" y="1046">? · SOMEWHERE NICE</text><text x="1900" y="1010">? · TEN GREAT STOPS</text></g>
+    </g>
+  </svg>
+  <div class="copy">
+    <div class="kicker mono">✦ &nbsp;WHICH TRAVEL SKILL SHOULD YOU INSTALL?</div>
+    <div class="rule"></div>
+    <h1>Road-trip skill<span class="vs">vs.</span><br>generic travel planners</h1>
+    <div class="sub">One plans the drive. The other lists the sights.<br>Five checks decide which one you need.</div>
+    <div class="tags mono">
+      <span class="tag">DRIVE CAPS</span><span class="tag">BOOK-BY</span><span class="tag">EV RANGE</span><span class="tag">CLOSURES</span><span class="tag">BORDERS</span>
+    </div>
+  </div>
+  <div class="foot mono"><span class="l">ROADTRIP NAVIGATOR &nbsp;·&nbsp; ROADTRIPSKILL.DEV</span><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+<!-- ================= FIVE MODES ================= -->
+<div class="frame" id="modes">
+  <div class="head">
+    <div class="kicker mono">WHERE A WISHLIST BREAKS DOWN</div>
+    <h1>The five things <em>generic planners miss</em></h1>
+  </div>
+  <div class="grid">
+    <div class="mcard"><span class="num mono">01</span>
+      <svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="34" stroke="#e8b26a" stroke-width="5" fill="none"/><path d="M48 28 v20 l14 10" stroke="#e8b26a" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+      <h3>Daily driving caps</h3><p>Route sliced into days under a sane drive limit — arrive before dark, gates still open.</p>
+      <div class="foot2 mono">NOT A WISHLIST</div></div>
+    <div class="mcard"><span class="num mono">02</span>
+      <svg viewBox="0 0 96 96"><rect x="16" y="20" width="64" height="58" rx="8" stroke="#e8b26a" stroke-width="5" fill="none"/><path d="M16 38 h64 M32 14 v12 M64 14 v12" stroke="#e8b26a" stroke-width="5" stroke-linecap="round"/><text x="30" y="68" font-family="DejaVu Sans Mono" font-size="26" fill="#e8b26a">14</text></svg>
+      <h3>Exact book-by dates</h3><p>Campgrounds ~6 mo, in-park lodges ~13 mo — on the right system, as a countdown.</p>
+      <div class="foot2 mono">RECREATION.GOV · PARKS CANADA</div></div>
+    <div class="mcard"><span class="num mono">03</span>
+      <svg viewBox="0 0 96 96"><rect x="14" y="30" width="56" height="36" rx="8" stroke="#e8b26a" stroke-width="5" fill="none"/><rect x="70" y="42" width="10" height="12" rx="3" fill="#e8b26a"/><path d="M44 36 l-10 14 h10 l-8 12" stroke="#e8b26a" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+      <h3>Fuel &amp; EV range</h3><p>Empty-stretch warnings; per-leg charging corridor with state-of-charge and winter derate.</p>
+      <div class="foot2 mono">SOC SIMULATED PER LEG</div></div>
+    <div class="mcard"><span class="num mono">04</span>
+      <svg viewBox="0 0 96 96"><path d="M48 16 v64 M48 24 l16 10 M48 24 l-16 10 M48 48 l16 10 M48 48 l-16 10 M20 80 h56" stroke="#e8b26a" stroke-width="5" stroke-linecap="round" fill="none"/></svg>
+      <h3>Seasonal closures</h3><p>Knows what month it is — Going-to-the-Sun, Tioga, Trail Ridge; reroutes for snow and fire.</p>
+      <div class="foot2 mono">CLOSURE-AWARE ROUTING</div></div>
+    <div class="mcard"><span class="num mono">05</span>
+      <svg viewBox="0 0 96 96"><path d="M22 82 V22" stroke="#e8b26a" stroke-width="6" stroke-linecap="round"/><path d="M22 34 L80 52 M22 50 L80 68" stroke="#e8b26a" stroke-width="6" stroke-linecap="round"/><path d="M36 38.5 v16 M50 43 v16 M64 47.5 v16" stroke="#e8b26a" stroke-width="4" stroke-linecap="round"/><path d="M12 82 h30" stroke="#e8b26a" stroke-width="5" stroke-linecap="round"/></svg>
+      <h3>Borders &amp; time zones</h3><p>Arrival math corrected across zones; US–CA–MX document and insurance checklist.</p>
+      <div class="foot2 mono">THE MATH NOBODY CHECKS</div></div>
+  </div>
+  <div class="foot mono"><span class="l">ROADTRIP NAVIGATOR &nbsp;·&nbsp; FEASIBILITY, NOT INSPIRATION</span><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+<!-- ================= COUNTDOWN ================= -->
+<div class="frame" id="count">
+  <div class="copy">
+    <div class="kicker mono">RESERVATIONS</div>
+    <div class="rule"></div>
+    <h1>“Book early” is not advice. <b>A date is.</b></h1>
+    <div class="sub">Every itinerary ships with a countdown to-do list — exact book-by dates, each pointed at the correct reservation system.</div>
+  </div>
+  <div class="panel">
+    <div class="ph"><span class="t mono">BOOKING COUNTDOWN</span><span class="s mono">SOUTHWEST LOOP · OCT 2027</span></div>
+    <div class="row"><div class="date mono">SEP 08</div><div class="what"><div class="a">Grand Canyon in-park lodge</div><div class="b mono">OPENS ~13 MONTHS OUT · LODGE SYSTEM</div></div><div class="left"><b>47</b>days left</div></div>
+    <div class="row"><div class="date mono">APR 15</div><div class="what"><div class="a">Watchman Campground</div><div class="b mono">RECREATION.GOV · OPENS ~6 MONTHS OUT</div></div><div class="left"><b>266</b>days left</div></div>
+    <div class="row"><div class="date mono">MAY 02</div><div class="what"><div class="a">Hearst Castle detour tickets</div><div class="b mono">RESERVECALIFORNIA · ROLLING WINDOW</div></div><div class="left"><b>283</b>days left</div></div>
+    <div class="row"><div class="date mono">JUN 01</div><div class="what"><div class="a">Zion timed-entry permit</div><div class="b mono">PARK PERMIT SYSTEM · SEASONAL ROUND</div></div><div class="left"><b>313</b>days left</div></div>
+  </div>
+  <div class="foot mono"><span class="l">SAMPLE COUNTDOWN · EVERY FIGURE GRADED VERIFIED / REFERENCE / ESTIMATE</span><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+<!-- ================= EV ================= -->
+<div class="frame" id="ev">
+  <div class="head">
+    <div>
+      <div class="kicker mono">THE EMPTY-STRETCH PROBLEM</div>
+      <h1>EV charging corridor, <em>simulated per leg</em></h1>
+    </div>
+    <div class="legend"><span><span class="sw"></span>STATE OF CHARGE</span><span><span class="dot"></span>CHARGE STOP</span></div>
+  </div>
+  <div class="plot">
+    <svg viewBox="0 0 2180 760" font-family="DejaVu Sans Mono">
+      <!-- gridlines -->
+      <g stroke="#3a2817" stroke-width="2">
+        <line x1="140" y1="60" x2="2140" y2="60"/><line x1="140" y1="210" x2="2140" y2="210"/>
+        <line x1="140" y1="360" x2="2140" y2="360"/><line x1="140" y1="510" x2="2140" y2="510"/>
+      </g>
+      <!-- reserve floor -->
+      <line x1="140" y1="570" x2="2140" y2="570" stroke="#8a6f52" stroke-width="3" stroke-dasharray="14 12"/>
+      <text x="2140" y="600" text-anchor="end" font-size="24" fill="#8a6f52">15% RESERVE FLOOR</text>
+      <!-- y labels -->
+      <g font-size="24" fill="#8a6f52" text-anchor="end">
+        <text x="118" y="70">100%</text><text x="118" y="220">75%</text><text x="118" y="370">50%</text><text x="118" y="520">25%</text>
+      </g>
+      <!-- area under SoC -->
+      <path d="M140 120 L560 260 L860 460 L860 180 L1180 300 L1420 350 L1420 160 L2140 500 L2140 660 L140 660 Z" fill="rgba(189,132,60,.14)"/>
+      <!-- SoC line: descents + vertical recharge jumps -->
+      <path d="M140 120 L560 260 L860 460" stroke="#bd843c" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M860 460 L860 180" stroke="#1f9e85" stroke-width="7" stroke-dasharray="4 14" stroke-linecap="round"/>
+      <path d="M860 180 L1180 300 L1420 350" stroke="#bd843c" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M1420 350 L1420 160" stroke="#1f9e85" stroke-width="7" stroke-dasharray="4 14" stroke-linecap="round"/>
+      <path d="M1420 160 L2140 500" stroke="#bd843c" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <!-- charge stops -->
+      <g>
+        <circle cx="860" cy="180" r="18" fill="#1f9e85"/><circle cx="860" cy="180" r="18" fill="none" stroke="#20150d" stroke-width="3"/>
+        <path d="M862 168 l-9 13 h8 l-7 11" stroke="#062019" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <text x="860" y="136" text-anchor="middle" font-size="27" fill="#f2e5d0">SAN SIMEON · 32→80%</text>
+        <circle cx="1420" cy="160" r="18" fill="#1f9e85"/><circle cx="1420" cy="160" r="18" fill="none" stroke="#20150d" stroke-width="3"/>
+        <path d="M1422 148 l-9 13 h8 l-7 11" stroke="#062019" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <text x="1420" y="116" text-anchor="middle" font-size="27" fill="#f2e5d0">MORRO BAY · 43→85%</text>
+      </g>
+      <!-- endpoint labels (selective) -->
+      <text x="150" y="92" font-size="27" fill="#f2e5d0">START 92%</text>
+      <text x="2130" y="472" text-anchor="end" font-size="27" fill="#f2e5d0">ARRIVE 29%</text>
+      <!-- x axis -->
+      <g font-size="25" fill="#c9ab86" text-anchor="middle">
+        <text x="140" y="710">MONTEREY</text><text x="560" y="710">BIG SUR</text><text x="860" y="710">SAN SIMEON</text>
+        <text x="1180" y="710">MORRO BAY</text><text x="1420" y="710">SAN LUIS OBISPO</text><text x="2170" y="710" text-anchor="end">SANTA BARBARA</text>
+      </g>
+      <!-- derate badge -->
+      <g><rect x="1690" y="70" width="450" height="64" rx="32" fill="none" stroke="#4a3016" stroke-width="2.5"/>
+      <path d="M1730 88 v28 M1718 95 l24 14 M1742 95 l-24 14" stroke="#c9ab86" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="1762" y="112" font-size="26" fill="#c9ab86">WINTER DERATE −18%</text></g>
+    </svg>
+  </div>
+  <div class="foot mono"><span class="l">SAMPLE LEG SIMULATION · PACIFIC COAST HWY · CHARGE-TO TARGETS PER STOP</span><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+<!-- ================= TERMINAL ================= -->
+<div class="frame" id="term">
+  <div class="copy">
+    <div class="kicker mono">TRY IT IN 30 SECONDS</div>
+    <h1 style="margin-top:26px">Install it — <em>or don’t.</em></h1>
+  </div>
+  <div class="win">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <pre><span class="c">$</span> <span class="w">/plugin marketplace add Waybox-AI/roadtrip-skill</span>
+<span class="g">✓</span> RoadTrip Navigator installed · MIT · no API keys
+<span class="c">$</span> <span class="w">“7 days, Las Vegas EV loop, late October”</span>
+<span class="g">→</span> slicing drive days · booking countdown · charging corridor
+<span class="g">→</span> <span class="w">itinerary.html</span> ready — map, timeline, budget · works offline</pre>
+  </div>
+  <div class="below">Prefer not to install anything? Open <b>roadtripskill.dev</b> and plan in the browser — free.</div>
+  <div class="foot mono"><span class="l">CLAUDE CODE · CURSOR · CODEX — 16+ AGENT TOOLS</span><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+<!-- ================= OG ================= -->
+<div class="frame og" id="og">
+  <svg viewBox="0 0 2400 1260" fill="none" style="position:absolute;inset:0">
+    <path d="M0 1060 L500 940 L900 1010 L1400 900 L1900 990 L2400 910 L2400 1260 L0 1260 Z" fill="#1a0f07"/>
+    <circle cx="1980" cy="300" r="130" fill="rgba(232,178,106,.2)"/>
+    <path d="M 300 1250 C 800 1080 1300 1000 2120 640" stroke="#e8b26a" stroke-width="7" stroke-dasharray="26 22" stroke-linecap="round"/>
+    <g font-family="DejaVu Sans Mono" font-size="26" fill="#c9ab86">
+      <circle cx="1050" cy="1028" r="24" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="1043" y="1037" fill="#e8b26a">2</text>
+      <circle cx="1660" cy="836" r="24" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="1653" y="845" fill="#e8b26a">4</text>
+      <circle cx="2120" cy="640" r="24" fill="#20150d" stroke="#e8b26a" stroke-width="4"/><text x="2113" y="649" fill="#e8b26a">5</text>
+    </g>
+  </svg>
+  <div class="copy">
+    <div class="kicker mono">✦ &nbsp;ROADTRIPSKILL.DEV / BLOG</div>
+    <div class="rule"></div>
+    <h1>Road-trip skill <span class="vs">vs.</span><br>generic travel planners</h1>
+    <div class="sub">Five checks decide which one you should install.</div>
+  </div>
+  <div class="dom mono">ROADTRIPSKILL.DEV</div>
+  <div style="position:absolute;right:120px;bottom:64px" class="mono"><span class="chip">Waybox</span></div>
+  <div class="vin"></div><div class="grain"></div>
+</div>
+
+</body></html>
