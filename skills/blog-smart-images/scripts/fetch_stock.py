@@ -27,6 +27,9 @@ from pathlib import Path
 
 RESERVE = 2  # leave this many requests unused when the API reports remaining
 
+# Pexels sits behind a CDN that answers 403 to the default urllib UA.
+UA = "blog-smart-images/0.1 (+https://github.com/Waybox-AI)"
+
 CAPS = {
     "pexels": int(os.environ.get("PEXELS_HOURLY_CAP", "190")),
     "unsplash": int(os.environ.get("UNSPLASH_HOURLY_CAP", "45")),
@@ -55,12 +58,12 @@ class Quota:
         self.path.write_text(json.dumps(self.data))
 
 def _get(url, headers):
-    req = urllib.request.Request(url, headers=headers)
+    req = urllib.request.Request(url, headers={"User-Agent": UA, **headers})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read().decode()), dict(r.headers)
 
 def _download(url, dest, headers=None):
-    req = urllib.request.Request(url, headers=headers or {})
+    req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
     with urllib.request.urlopen(req, timeout=60) as r, open(dest, "wb") as f:
         f.write(r.read())
 
