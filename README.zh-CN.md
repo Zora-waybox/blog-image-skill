@@ -66,6 +66,7 @@ image_style: parks-golden-west
 - `skills/blog-smart-images/references/aesthetic-rubric.md` —— 源自 ArtiMuse 的评分协议
 - `skills/blog-smart-images/references/style-profile.md` —— 摄影语法 + 品牌 token（可按仓库覆盖）
 - `skills/blog-smart-images/references/style-presets.md` —— 上面那六套可切换风格（可自行扩展）
+- `skills/blog-smart-images/scripts/preview.py` —— 把配好图的文章渲染成栏宽预览页，顶部带全部配图的胶片带，发布前一眼看出整组图是否撞构图
 - `skills/blog-smart-images/templates/card-base.html` —— 经生产验证的品牌卡片布局（头图、数据卡、倒计时、图表、终端、OG）
 - `auto-illustrate.yml.example` + `INTEGRATION.zh-CN.md` —— 可直接放进你博客仓库的 CI；与 [cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills) 组合使用（先跑文本、再跑配图）
 

@@ -138,6 +138,16 @@ suggestions (e.g. "site template should render hero_image from front matter").
 Verify: re-parse the post (`--check`), confirm image paths resolve, eyeball each
 final image once more at export size for label collisions or compression artifacts.
 
+Then look at the set **in layout**, not one image at a time:
+```
+python3 scripts/preview.py <post> --open
+```
+It renders the post at content width and puts a filmstrip of every figure, in
+document order, at the top. Repetition is the failure this catches — two figures
+with the same composition, three consecutive sunsets, a hero the first section
+figure echoes — none of which is visible while scoring candidates in isolation.
+A figure that only fails here still fails: re-source it or drop the slot.
+
 ## Composing with blog-marketing-skills
 
 Run `blog-seo-geo` BEFORE this skill (it preserves `<img>`/links verbatim, so its
@@ -149,4 +159,6 @@ and `INTEGRATION.md` at the plugin root.
 
 Python 3.10+, Pillow (`pip install pillow`); Playwright + Chromium only when the
 brand card renderer is used (`pip install playwright && playwright install chromium`).
+`preview.py` uses the `markdown` package when it is installed and falls back to a
+built-in converter otherwise, so it needs nothing.
 Stock/image-gen sources activate solely via env keys — no keys, no calls.

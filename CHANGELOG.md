@@ -4,6 +4,18 @@ Notable changes to this project. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `scripts/preview.py` — renders an illustrated post to a standalone HTML preview
+  at content width, with a filmstrip of every figure in document order. Figures
+  are scored one at a time but read in sequence, so repetition (two identical
+  compositions, three consecutive sunsets, a hero the first figure echoes) is
+  invisible until the set is seen together. Wired into SKILL.md Step 6. Uses
+  `markdown` when installed and a built-in converter otherwise; warns about image
+  paths that do not resolve.
+
 ## [0.1.1] — 2026-07-24
 
 ### Fixed

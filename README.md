@@ -72,6 +72,7 @@ gen-prompt core, and negatives.
 - `skills/blog-smart-images/references/aesthetic-rubric.md` — the ArtiMuse-derived scoring protocol
 - `skills/blog-smart-images/references/style-profile.md` — photo grammar + brand tokens (override per repo)
 - `skills/blog-smart-images/references/style-presets.md` — the six switchable looks above (add your own)
+- `skills/blog-smart-images/scripts/preview.py` — renders the illustrated post at content width with a filmstrip of every figure, so repetition across the set is visible before publish
 - `skills/blog-smart-images/templates/card-base.html` — production-tested brand card layouts (hero, stat cards, countdown, chart, terminal, OG)
 - `auto-illustrate.yml.example` + `INTEGRATION.md` — CI drop-in for your blog repo; composes with [cazerme/blog-marketing-skills](https://github.com/cazerme/blog-marketing-skills) (text pass first, image pass second)
 
