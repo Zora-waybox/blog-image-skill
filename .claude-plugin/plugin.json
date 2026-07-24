@@ -1,6 +1,6 @@
 {
   "name": "blog-image-skill",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Automatically illustrate a local blog post (Markdown or HTML): derive an image plan from the post's structure, source candidates from licensed inputs only (own asset library, brand card renderer, optional stock/image-gen APIs), score every candidate with an ArtiMuse-style 8-dimension aesthetic rubric plus a brand style-fit gate, post-process to web sizes (webp + jpg + OG), and insert hero/OG/section figures with alt text via insert-only safe writes (.bak backup, dry-run first, fail closed). Emits an .image-report.md. Designed to compose with blog-marketing-skills (run blog-seo-geo first; this skill never edits prose).",
   "author": {
     "name": "Waybox",

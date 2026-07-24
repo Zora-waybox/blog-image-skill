@@ -1,7 +1,7 @@
 ---
 name: blog-smart-images
 description: 'Illustrate a local blog post (Markdown/HTML) end-to-end: plan image slots from the post structure, source candidates from licensed inputs only, score them with an ArtiMuse-style 8-dimension aesthetic rubric + brand style-fit gate, export web-ready webp/jpg/OG files, and insert hero + section figures with alt text using insert-only safe writes and an image report. Use when a post needs a hero image, OG image, section illustrations, or "auto-illustrate the blog" comes up.'
-version: "0.1.0"
+version: "0.1.1"
 license: MIT
 ---
 
