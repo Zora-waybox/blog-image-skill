@@ -12,7 +12,7 @@ word of prose** (insert-only writes, `.bak` backup, dry-run first, fail closed).
 Every run emits an `.image-report.md` with per-dimension scores and license info.
 
 ```
-/plugin marketplace add Waybox-AI/blog-image-skill
+/plugin marketplace add Zora-waybox/blog-image-skill
 /blog-image-skill:blog-smart-images content/blog/my-post.md
 ```
 

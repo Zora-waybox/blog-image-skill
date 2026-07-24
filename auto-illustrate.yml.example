@@ -34,7 +34,7 @@ jobs:
       - name: Install skills into .claude/skills
         run: |
           mkdir -p .claude/skills
-          git clone --depth 1 https://github.com/Waybox-AI/blog-image-skill /tmp/bis
+          git clone --depth 1 https://github.com/Zora-waybox/blog-image-skill /tmp/bis
           cp -r /tmp/bis/skills/blog-smart-images .claude/skills/
           git clone --depth 1 https://github.com/cazerme/blog-marketing-skills /tmp/bms || true
           cp -r /tmp/bms/skills/blog-seo-geo .claude/skills/ 2>/dev/null || true

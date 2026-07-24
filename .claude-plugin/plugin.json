@@ -4,10 +4,10 @@
   "description": "Automatically illustrate a local blog post (Markdown or HTML): derive an image plan from the post's structure, source candidates from licensed inputs only (own asset library, brand card renderer, optional stock/image-gen APIs), score every candidate with an ArtiMuse-style 8-dimension aesthetic rubric plus a brand style-fit gate, post-process to web sizes (webp + jpg + OG), and insert hero/OG/section figures with alt text via insert-only safe writes (.bak backup, dry-run first, fail closed). Emits an .image-report.md. Designed to compose with blog-marketing-skills (run blog-seo-geo first; this skill never edits prose).",
   "author": {
     "name": "Waybox",
-    "url": "https://github.com/Waybox-AI"
+    "url": "https://github.com/Zora-waybox"
   },
-  "homepage": "https://github.com/Waybox-AI/blog-image-skill",
-  "repository": "https://github.com/Waybox-AI/blog-image-skill",
+  "homepage": "https://github.com/Zora-waybox/blog-image-skill",
+  "repository": "https://github.com/Zora-waybox/blog-image-skill",
   "license": "MIT",
   "keywords": [
     "blog",

@@ -39,7 +39,7 @@ API 条款在 caption 自动附 "Photo by X on Unsplash" 署名；Pexels 无署�
       - name: Install illustration skill
         run: |
           mkdir -p .claude/skills
-          git clone --depth 1 https://github.com/Waybox-AI/blog-image-skill /tmp/bis
+          git clone --depth 1 https://github.com/Zora-waybox/blog-image-skill /tmp/bis
           cp -r /tmp/bis/skills/blog-smart-images .claude/skills/
 
       - name: Illustrate new posts
@@ -58,7 +58,7 @@ API 条款在 caption 自动附 "Photo by X on Unsplash" 署名；Pexels 无署�
 ## C. 本地 / Cowork / Claude Code 手动跑
 
 ```
-/plugin marketplace add Waybox-AI/blog-image-skill      # 或把 skills/blog-smart-images 拷进 .claude/skills/
+/plugin marketplace add Zora-waybox/blog-image-skill      # 或把 skills/blog-smart-images 拷进 .claude/skills/
 /blog-image-skill:blog-smart-images content/blog/my-post.md --images-dir public/images/my-post
 ```
 
