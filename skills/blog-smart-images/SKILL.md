@@ -148,6 +148,12 @@ with the same composition, three consecutive sunsets, a hero the first section
 figure echoes — none of which is visible while scoring candidates in isolation.
 A figure that only fails here still fails: re-source it or drop the slot.
 
+The preview is a **local artifact, never a deliverable**: `preview.py` only reads
+the post (it writes nothing back), and its `<post>.preview.html` sits next to the
+post purely so relative image paths resolve. Delete it after review, or ignore
+`*.preview.html` in the content repo so a directory-level publish step cannot pick
+it up.
+
 ## Composing with blog-marketing-skills
 
 Run `blog-seo-geo` BEFORE this skill (it preserves `<img>`/links verbatim, so its
