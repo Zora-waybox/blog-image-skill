@@ -14,11 +14,35 @@ editorial judgment: what each slot needs, which candidate earns the slot, and wh
 ## Invocation
 
 ```
-/blog-image-skill:blog-smart-images <path/to/post.md> [--images-dir <dir>] [--max-figures 5]
+/blog-image-skill:blog-smart-images <path/to/post.md|.html> [--images-dir <dir>] [--max-figures 5]
 ```
 
 Defaults: `--images-dir images/<post-slug>/` relative to the post; hero + OG + up
 to 4 section figures (cap total inline figures at 5, one per ~500–800 words).
+
+## Post formats
+
+Markdown and HTML are both first-class. The scripts decide by file extension
+(`.html`/`.htm` ⇒ HTML), and `extract_slots.py` records the choice as `format`
+in the plan. What differs:
+
+| | Markdown | HTML |
+|---|---|---|
+| Heading anchor | the literal line `## Heading` | the heading's **visible text** (`Heading`) |
+| Figure block | `![alt](path)` + `*caption*` | `<figure><img src alt><figcaption>…</figcaption></figure>` |
+| Head metadata | `frontmatter` → the `---` block | `head_meta` → `<meta>` before `</head>` |
+
+An HTML post is either a **full document** (has `<head>`) or a **fragment** —
+what template-driven sites commit: `<p>`, `<section>`, `<h2>` and nothing else.
+`extract_slots.py --check` reports which (`html_shape=document|fragment`).
+
+**A fragment has no `<head>`, so head metadata cannot be written into it.**
+`insert_images.py` refuses `head_meta` on a fragment rather than inventing a
+place for it. Put `hero_image` / `og_image` in the report instead, as
+paste-ready values naming where they belong — the site's template or its post
+registry. That is the same call blog-seo-geo makes in its fragment mode, and it
+matters: a fragment's metadata usually lives in a file this skill has no
+business editing.
 
 ## Hard rules (read before anything else)
 
@@ -122,10 +146,19 @@ image.
 `--og` adds the 1200×630 jpg crop.
 
 ### Step 5 — Insert (safe writes)
-Build `insert-plan.json` (see `examples/`): front-matter keys
-(`hero_image`, `hero_alt`, `og_image` — key names configurable per site template),
-plus figure blocks `![alt](path "title")` + `*caption*` anchored AFTER named
-headings/paragraph fingerprints. Then:
+Build `insert-plan.json` — `examples/insert-plan.example.json` for Markdown,
+`examples/insert-plan.html.example.json` for HTML.
+
+- **Markdown**: front-matter keys (`hero_image`, `hero_alt`, `og_image` — key
+  names configurable per site template), plus figure blocks
+  `![alt](path "title")` + `*caption*`.
+- **HTML**: `head_meta` (full documents only — a fragment's values go in the
+  report, see *Post formats*), plus `<figure>` blocks. Anchor on the heading's
+  visible text, without the `## `.
+
+Either way blocks are anchored AFTER named headings/paragraph fingerprints, and
+land after the first complete block that follows the anchor so the figure
+follows prose rather than butting against the heading. Then:
 ```
 python3 scripts/insert_images.py <post> --plan insert-plan.json          # dry-run, prints diff
 python3 scripts/insert_images.py <post> --plan insert-plan.json --write  # .bak + atomic write
