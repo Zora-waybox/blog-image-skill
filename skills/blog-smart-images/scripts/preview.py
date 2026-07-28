@@ -7,15 +7,19 @@ wrong in layout. This renders the post at realistic content width, plus a
 filmstrip of every figure in document order so repetition is visible at a glance.
 
 Usage:
-  python3 preview.py <post.md> [-o out.html] [--width 760] [--open]
+  python3 preview.py <post.md|post.html> [-o out.html] [--width 760] [--open]
 
 The output must sit next to the post so relative image paths resolve; that is
 the default. Uses the `markdown` package when available and falls back to a
 built-in converter covering the subset this skill emits, so it works with no
-third-party dependency at all.
+third-party dependency at all. An HTML post skips conversion entirely — its body
+is already markup, so it is embedded as-is (a full document contributes its
+<body>, a fragment contributes itself).
 """
 import argparse, html, os, re, subprocess, sys
 from pathlib import Path
+
+import htmlpost
 
 CSS = """
 :root { color-scheme: light dark; --ink:#1b1512; --muted:#6b5b4d; --bg:#fbf8f4;
@@ -98,11 +102,22 @@ def front_matter_html(fm):
 
 
 # ------------------------------------------------------------------- filmstrip
-def filmstrip(body, post_dir):
+def figures(body, is_html):
+    """[(src, alt)] in document order, in whichever markup the post uses."""
+    if is_html:
+        alts = dict(zip(htmlpost.img_srcs(body),
+                        [m.group(1) or m.group(2) or ""
+                         for m in re.finditer(
+                             r"""<img\b[^>]*?\balt\s*=\s*(?:"([^"]*)"|'([^']*)')""",
+                             body, re.S | re.I)]))
+        return [(s, alts.get(s, "")) for s in htmlpost.img_srcs(body)]
+    return [(m.group("src"), m.group("alt")) for m in IMG_RE.finditer(body)]
+
+
+def filmstrip(body, post_dir, is_html=False):
     """Every figure in document order — the point of the whole script."""
     shots = []
-    for m in IMG_RE.finditer(body):
-        src, alt = m.group("src"), m.group("alt")
+    for src, alt in figures(body, is_html):
         label = (alt[:70] + "…") if len(alt) > 70 else (alt or Path(src).name)
         missing = "" if (post_dir / src).exists() else " ⚠ missing"
         shots.append((src, label + missing))
@@ -231,9 +246,18 @@ def main():
         sys.exit("the preview must sit next to the post so relative image "
                  "paths resolve — drop -o or point it at the same directory")
 
-    fm, body = split_front_matter(src.read_text(encoding="utf-8"))
-    missing = [m.group("src") for m in IMG_RE.finditer(body)
-               if not (src.parent / m.group("src")).exists()]
+    raw = src.read_text(encoding="utf-8")
+    is_html = htmlpost.is_html(src)
+    if is_html:
+        # Already markup — converting it would re-serialise and lie about the
+        # post. Take <body> from a full document; a fragment is its own body.
+        fm, body, rendered = "", htmlpost.body_inner(raw), htmlpost.body_inner(raw)
+    else:
+        fm, body = split_front_matter(raw)
+        rendered = render(body)
+    missing = [s for s, _ in figures(body, is_html)
+               if not s.startswith(("http://", "https://"))
+               and not (src.parent / s).exists()]
 
     page = (
         f"<!doctype html><html><head><meta charset='utf-8'>"
@@ -243,7 +267,7 @@ def main():
         f"<div class='bar'>local preview · not your site's styling · "
         f"{html.escape(src.name)}</div>"
         f"<div class='wrap' style='--w:{a.width}px'>"
-        f"{front_matter_html(fm)}{filmstrip(body, src.parent)}{render(body)}"
+        f"{front_matter_html(fm)}{filmstrip(body, src.parent, is_html)}{rendered}"
         f"</div></body></html>")
     out.write_text(page, encoding="utf-8")
 

@@ -1,0 +1,17 @@
+{
+  "_comment": "HTML post plan. 'head_meta' works only on a FULL document (one with a <head>); an HTML fragment has nowhere to put it, so those values go in the report for the site template or post registry to consume. Anchors are the heading's visible text — no '## ' prefix. Blocks are HTML.",
+  "head_meta": {
+    "og:image": "images/my-post/og-my-post-1200x630.jpg",
+    "twitter:image": "images/my-post/og-my-post-1200x630.jpg"
+  },
+  "inserts": [
+    {
+      "after_heading": "The five things generic planners miss",
+      "block": "<figure><img src=\"images/my-post/five-cards.webp\" alt=\"Five illustrated cards: drive caps, book-by dates, EV range, closures, borders\" loading=\"lazy\" /><figcaption>The five checks that separate a plan from a wishlist.</figcaption></figure>"
+    },
+    {
+      "after_text": "a bare model will cheerfully tell you to &ldquo;check the park website.&rdquo;",
+      "block": "<figure><img src=\"images/my-post/countdown.webp\" alt=\"Sample booking countdown with exact book-by dates per reservation system\" loading=\"lazy\" /><figcaption>Sample countdown &mdash; each item lands on the right reservation system.</figcaption></figure>"
+    }
+  ]
+}

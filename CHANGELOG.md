@@ -8,6 +8,45 @@ Notable changes to this project. Format follows
 
 ### Added
 
+- **HTML posts actually work.** `plugin.json`, `SKILL.md` and the README already
+  advertised "Markdown or HTML", but all three format-bound scripts were
+  Markdown-only. `extract_slots.py` matched headings with `^#{1,4}\s`, so an HTML
+  post parsed "successfully" into **zero** section-figure slots — the failure was
+  silent, not an error. `insert_images.py` emitted Markdown image syntax and
+  required a `---` block. This closes the gap:
+  - `scripts/htmlpost.py` (new) — shared HTML primitives: heading spans,
+    tag-stripped text, `<img src>` extraction, block-boundary scan. Regex-based
+    on purpose: every consumer needs byte offsets into the original text so
+    insertion stays a pure splice and the fail-closed integrity check can still
+    compare against the original. A tree parser would force a re-serialisation
+    and lose that guarantee.
+  - `extract_slots.py` — parses HTML, reports `format` and
+    `html_shape=document|fragment`, and writes anchors in the post's own
+    vocabulary (`## Heading` for Markdown, bare heading text for HTML).
+  - `insert_images.py` — anchors on `<h1>`..`<h6>` by visible text or a literal
+    snippet, inserts `<figure>` blocks after the first complete block following
+    the anchor (matching the Markdown path's "figure follows prose"), and adds
+    `head_meta` for `<meta>` insertion before `</head>`.
+  - `preview.py` — embeds an HTML post's markup as-is instead of running it
+    through the Markdown converter; a full document contributes only its
+    `<body>`.
+  - `examples/insert-plan.html.example.json` (new).
+  All insert-only guarantees carry over unchanged: exactly-once anchors, `.bak`,
+  dry-run first, atomic write, and the integrity check that refuses any diff
+  which is not a pure insertion.
+- **HTML fragments are handled honestly.** A fragment (`<p>`/`<section>` with no
+  `<head>` — what template-driven sites commit) has nowhere to put head
+  metadata, so `head_meta` is refused on one rather than a `<head>` being
+  invented. Those values belong in the report for the site template or post
+  registry, the same call blog-seo-geo makes in its fragment mode.
+- `tests/` (new) — 26 end-to-end tests driving the scripts as subprocesses, the
+  way SKILL.md invokes them. Covers both formats, both HTML shapes, and every
+  refusal path (ambiguous anchor, missing anchor, missing image file, duplicate
+  key, fragment head metadata, wrong metadata key for the format). Includes
+  Markdown regression tests: the Markdown path's output is byte-identical to
+  before this change. Wired into `validate.yml`, which previously only ran
+  `py_compile`.
+
 - `scripts/preview.py` — renders an illustrated post to a standalone HTML preview
   at content width, with a filmstrip of every figure in document order. Figures
   are scored one at a time but read in sequence, so repetition (two identical

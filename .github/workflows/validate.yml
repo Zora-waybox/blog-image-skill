@@ -32,3 +32,7 @@ jobs:
         run: |
           python -m py_compile skills/blog-smart-images/scripts/*.py
           echo "Python scripts compile OK"
+
+      - name: Run tests
+        run: |
+          python -m unittest discover tests -v
