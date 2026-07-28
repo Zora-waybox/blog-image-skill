@@ -8,7 +8,7 @@
 
 **Aesthetic auto-illustration for blog posts** — a Claude Code / agent-skill plugin by Waybox.
 
-Give it a Markdown post; it plans the image slots from the post's structure, sources
+Give it a Markdown or HTML post; it plans the image slots from the post's structure, sources
 candidates from **licensed inputs only** (repo asset library, an offline brand card
 renderer, optional Pexels/Unsplash or image-gen APIs), scores every candidate with an
 **ArtiMuse-style 8-dimension aesthetic rubric** (critique-first, anti-positivity-bias,
@@ -68,7 +68,11 @@ gen-prompt core, and negatives.
 
 ## What's inside
 
-- `skills/blog-smart-images/SKILL.md` — the workflow (7 steps, hard rules)
+- `skills/blog-smart-images/SKILL.md` — the workflow (7 steps, hard rules) and the
+  Markdown/HTML format table
+- `skills/blog-smart-images/scripts/htmlpost.py` — shared HTML primitives, so an
+  HTML post gets real heading anchors and `<figure>` inserts instead of silently
+  yielding zero figure slots
 - `skills/blog-smart-images/references/aesthetic-rubric.md` — the ArtiMuse-derived scoring protocol
 - `skills/blog-smart-images/references/style-profile.md` — photo grammar + brand tokens (override per repo)
 - `skills/blog-smart-images/references/style-presets.md` — the six switchable looks above (add your own)
